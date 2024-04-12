@@ -16,32 +16,29 @@ internal class Program
         if (p1.Sacar(valorChaySaque))
         {
             p1.Sacar(valorChaySaque);
+            Console.WriteLine("-- Saque Pessoa 1 --");
             Console.WriteLine(p1);
         }
 
         Console.WriteLine("-- Dados Pessoa 2 --");
         Console.WriteLine(p2);
 
-        // Operação de saque Pessoa 1
+        // Operação de saque Pessoa 2
         double valorDuduSaque = 500.00;
 
         if (p1.Sacar(valorDuduSaque))
         {
             p1.Sacar(valorDuduSaque);
+            Console.WriteLine("-- Saque Pessoa 2");
             Console.WriteLine(p2);
         }
 
-        // Mostrar saldo da Pessoa 1
-        // double saldo = p1.VerSaldo();
-        // Console.WriteLine(saldo.ToString("F2"));
-
         // Transferência Pessoa 1 -> Pessoa 2
         double valorTransferencia = 10.00;
-
         p1.Transferir(valorTransferencia, p2);
 
         // Mostrar Extrato
-
+        Console.WriteLine("-- Extrato de transações pessoa 1 --");
         p1.Depositar(200);
 
         Movimentacao[] movimentacoes = p1.Extrato();
