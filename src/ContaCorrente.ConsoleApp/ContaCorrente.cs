@@ -2,34 +2,32 @@
 
 internal class ContaCorrente
 {
-    public string NomePessoa;
-    public string SobrenomePessoa;
-    public string Cpf;
-    /*
-    public Cliente Nome;
-    public Cliente Sobrenome;
-    public Cliente Cpf;
-    */
-    public double Saldo;
+    public Cliente Titular;
+    private double Saldo;
     public double Limite;
     public string NumeroAgencia;
     public string TipoPessoa;
-    //public double[] HistoricoMovimentacao = new double[20];
+    public Movimentacao[] movimentacoes;
+    private int ContadorMovimentacoes = 0;
 
-    public ContaCorrente(string nome, string sobrenome, string cpf, double saldo, double limite, string numeroAgencia, string tipoPessoa)
+    public ContaCorrente(string nomePessoa, string sobrenomePessoa, string cpf, double saldo, double limite, string numeroAgencia, string tipoPessoa)
     {
-        NomePessoa = nome;
-        SobrenomePessoa = sobrenome;
-        Cpf = cpf;
+        Titular = new Cliente(nomePessoa, sobrenomePessoa, cpf);
         Saldo = saldo;
         Limite = limite;
         NumeroAgencia = numeroAgencia;
         TipoPessoa = tipoPessoa;
+        this.movimentacoes = new Movimentacao[20];
     }
 
     public void Depositar(double valorDeposito)
     {
         Saldo += valorDeposito;
+
+        Movimentacao movimentacao = new Movimentacao(valorDeposito, "Depósito");
+
+        movimentacoes[ContadorMovimentacoes] = movimentacao;
+        ContadorMovimentacoes++;
     }
 
     public bool Sacar(double valorSaque)
@@ -37,6 +35,10 @@ internal class ContaCorrente
         if (valorSaque < Limite + Saldo)
         {
             Saldo -= valorSaque;
+            Movimentacao movimentacao = new Movimentacao(valorSaque, "Saque");
+
+            movimentacoes[ContadorMovimentacoes] = movimentacao;
+            ContadorMovimentacoes++;
             return true;
         }
         else
@@ -50,11 +52,16 @@ internal class ContaCorrente
         return Saldo;
     }
 
-    public bool Transferir(double valorTransferir)
+    public bool Transferir(double valorTransferir, ContaCorrente conta)
     {
         if (valorTransferir < Limite + Saldo)
         {
             Saldo -= valorTransferir;
+            conta.ReceberTransferencia(valorTransferir);
+            Movimentacao movimentacao = new Movimentacao(valorTransferir, "Transferência");
+
+            movimentacoes[ContadorMovimentacoes] = movimentacao;
+            ContadorMovimentacoes++;
             return true;
         }
         else
@@ -63,20 +70,35 @@ internal class ContaCorrente
         }
     }
 
-    public void Extrato()
+    public bool ReceberTransferencia(double valorReceber)
     {
+        if (valorReceber < Limite + Saldo)
+        {
+            Saldo += valorReceber;
+            Movimentacao movimentacao = new Movimentacao(valorReceber, "Depósito");
 
+            movimentacoes[ContadorMovimentacoes] = movimentacao;
+            ContadorMovimentacoes++;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public Movimentacao[] Extrato()
+    {
+        return movimentacoes;
     }
 
     public override string ToString()
     {
-        return "Nome: " + NomePessoa + " " + SobrenomePessoa + "\n" +
-            "CPF: " + Cpf + "\n" +
+        return "Nome: " + Titular.NomeCliente + " " + Titular.SobrenomeCliente + "\n" +
+            "CPF: " + Titular.Cpf + "\n" +
             "Saldo: " + "R$" + Saldo.ToString("F2") + "\n" +
             "Limite: " + "R$" + Limite.ToString("F2") + "\n" +
             "Número da Agência: " + NumeroAgencia + "\n" +
             "Tipo Pessoa: " + TipoPessoa + "\n";
     }
-
-
 }
